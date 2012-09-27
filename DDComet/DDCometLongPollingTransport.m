@@ -3,7 +3,7 @@
 #import "DDCometClient.h"
 #import "DDCometMessage.h"
 #import "DDQueue.h"
-#import "JSON.h"
+#import "SBJson.h"
 
 
 @interface DDCometLongPollingTransport ()
