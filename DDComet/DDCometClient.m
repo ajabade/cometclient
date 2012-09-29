@@ -170,7 +170,8 @@
 				m_clientID = [message.clientID retain];
 				
 				DDCometMessage *connectMessage = [DDCometMessage messageWithChannel:@"/meta/connect"];
-				connectMessage.connectionType = @"long-polling";
+				connectMessage.connectionType = @"long-polling";                
+                connectMessage.advice = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithInt:0], @"timeout", nil];
 				[self sendMessage:connectMessage];
 				
 				if (m_delegate && [m_delegate respondsToSelector:@selector(cometClientHandshakeDidSucceed:)])
