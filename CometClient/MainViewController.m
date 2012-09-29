@@ -19,7 +19,7 @@
 {
 	if (m_client == nil)
 	{
-		m_client = [[DDCometClient alloc] initWithURL:[NSURL URLWithString:@"http://localhost:8080/cometd"]];
+		m_client = [[DDCometClient alloc] initWithURL:[NSURL URLWithString:@"http://192.168.0.14:3293/faye"]];
 		m_client.delegate = self;
 		[m_client scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
 		[m_client handshake];
