@@ -147,7 +147,7 @@
 	message.clientID = m_clientID;
 	if (!message.ID)
 		message.ID = [self nextMessageID];
-	NSLog(@"Sending message: %@", message);
+	DDCometDLog(@"Sending message: %@", message);
 	[m_outgoingQueue addObject:message];
 	
 	if (m_transport == nil)
@@ -159,7 +159,7 @@
 
 - (void)handleMessage:(DDCometMessage *)message
 {
-	NSLog(@"Message received: %@", message);
+	DDCometDLog(@"Message received: %@", message);
 	NSString *channel = message.channel;
 	if ([channel hasPrefix:@"/meta/"])
 	{
@@ -237,7 +237,7 @@
 		}
 		else
 		{
-			NSLog(@"Unhandled meta message");
+			DDCometDLog(@"Unhandled meta message");
 		}
 	}
 	else

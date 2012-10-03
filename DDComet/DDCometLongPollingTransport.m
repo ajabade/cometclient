@@ -62,7 +62,7 @@
 				DDCometMessage *message = [DDCometMessage messageWithChannel:@"/meta/connect"];
 				message.clientID = m_client.clientID;
 				message.connectionType = @"long-polling";
-				NSLog(@"Sending long-poll message: %@", message);
+				DDCometDLog(@"Sending long-poll message: %@", message);
 				messages = [NSArray arrayWithObject:message];
 			}
 			else
