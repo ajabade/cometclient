@@ -33,7 +33,7 @@
 - (void)dealloc
 {
 	[m_object release];
-	[m_next release];
+	//[m_next release];
 	[super dealloc];
 }
 
@@ -95,6 +95,7 @@
 {
 	while (YES)
 	{
+        DDConcurrentQueueNode *temp_head = m_head;
 		DDConcurrentQueueNode *head = m_head;
 		DDConcurrentQueueNode *tail = m_tail;
 		DDConcurrentQueueNode *first = head.next;
@@ -113,6 +114,8 @@
 				if (object != nil)
 				{
 					first.object = nil;
+                    [temp_head release];
+                    temp_head = nil;
 					return object;
 				}
 				// else skip over deleted item, continue loop
