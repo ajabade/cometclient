@@ -3,8 +3,8 @@
 #import "DDCometClient.h"
 #import "DDCometMessage.h"
 #import "DDQueue.h"
-#import "SBJson.h"
-
+//#import "SBJson.h"
+#import <Foundation/NSJSONSerialization.h>
 
 @interface DDCometLongPollingTransport ()
 
@@ -53,7 +53,7 @@
 		NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 		NSArray *messages = [self outgoingMessages];
 		
-		BOOL isPolling;
+		BOOL isPolling = NO;
 		if ([messages count] == 0)
 		{
 			if (m_client.state == DDCometStateConnected)
@@ -63,7 +63,7 @@
 				message.clientID = m_client.clientID;
 				message.connectionType = @"long-polling";
 				DDCometDLog(@"Sending long-poll message: %@", message);
-				messages = [NSArray arrayWithObject:message];
+				messages = [NSArray arrayWithObject:[message proxyForJson]];
 			}
 			else
 			{
@@ -119,7 +119,7 @@
 	DDCometMessage *message;
 	id<DDQueue> outgoingQueue = [m_client outgoingQueue];
 	while ((message = [outgoingQueue removeObject]))
-		[messages addObject:message];
+		[messages addObject:[message proxyForJson]];
 	return messages;
 }
 
@@ -127,9 +127,14 @@
 {
 	NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:m_client.endpointURL];
 	
-	SBJsonWriter *jsonWriter = [[SBJsonWriter alloc] init];    
-    NSData *body = [jsonWriter dataWithObject:messages];
-    [jsonWriter release];
+	//SBJsonWriter *jsonWriter = [[SBJsonWriter alloc] init];
+    //NSData *body = [jsonWriter dataWithObject:messages];
+    //[jsonWriter release];
+    NSError *error = nil;
+    NSData *body = [NSJSONSerialization dataWithJSONObject:messages options:kNilOptions error:&error];
+    
+    if(error)
+        return nil;
 	
 	[request setHTTPMethod:@"POST"];
 	[request setValue:@"application/json;charset=UTF-8" forHTTPHeaderField:@"Content-Type"];
@@ -165,13 +170,19 @@
 	NSData *responseData = [[m_responseDatas objectForKey:[self keyWithConnection:connection]] retain];
 	[m_responseDatas removeObjectForKey:[self keyWithConnection:connection]];
 	
-	SBJsonParser *parser = [[SBJsonParser alloc] init];
-	NSArray *responses = [parser objectWithData:responseData];
-	[parser release];
-	parser = nil;
+    NSError *error = nil;
+    NSArray *responses = [NSJSONSerialization JSONObjectWithData:responseData options:kNilOptions error:&error];
+    
+	//SBJsonParser *parser = [[SBJsonParser alloc] init];
+	//NSArray *responses = [parser objectWithData:responseData];
+	//[parser release];
+	//parser = nil;
 	[responseData release];
 	responseData = nil;
 	
+    if(error)
+        return;
+
 	id<DDQueue> incomingQueue = [m_client incomingQueue];
 	
 	for (NSDictionary *messageData in responses)
