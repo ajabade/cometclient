@@ -29,8 +29,8 @@
 
 - (void)dealloc
 {
-	[m_responseDatas release];
-	[m_client release];
+	[m_responseDatas release], m_responseDatas = nil;
+	[m_client release], m_client = nil;
 	[super dealloc];
 }
 
