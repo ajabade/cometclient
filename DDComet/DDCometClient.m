@@ -21,8 +21,16 @@
 @synthesize clientID = m_clientID,
 	endpointURL = m_endpointURL,
 	state = m_state,
-	advice = m_advice,
+	//advice = m_advice,
 	delegate = m_delegate;
+
+-(NSDictionary*)advice
+{
+    @synchronized(self)
+    {
+        return m_advice;
+    }
+}
 
 - (id)initWithURL:(NSURL *)endpointURL
 {
@@ -188,7 +196,10 @@
 		{
 			if (message.advice)
 			{
-				[m_advice release];
+                @synchronized(self)
+                {
+                    [m_advice release], m_advice = nil;
+                }
 				m_advice = [message.advice retain];
 			}
 			if (![message.successful boolValue])
