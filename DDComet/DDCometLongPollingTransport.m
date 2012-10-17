@@ -140,10 +140,11 @@
 	[request setValue:@"application/json;charset=UTF-8" forHTTPHeaderField:@"Content-Type"];
 	[request setHTTPBody:body];
 	
-	NSNumber *timeout = [m_client.advice objectForKey:@"timeout"];
+	NSNumber *timeout = [[m_client.advice objectForKey:@"timeout"] retain];
 	if (timeout)
 		[request setTimeoutInterval:([timeout floatValue] / 1000)];
-	
+	[timeout release];
+    
 	return request;
 }
 
